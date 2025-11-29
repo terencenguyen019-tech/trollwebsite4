@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Tìm Người Yêu Cho Trang</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap');
+        body { font-family: 'Nunito', sans-serif; background: linear-gradient(135deg, #fdfbfb 0%, #ebedee 100%); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; color: #333; }
+        .container { background: white; padding: 30px; border-radius: 25px; box-shadow: 0 15px 35px rgba(0,0,0,0.1); width: 100%; max-width: 500px; text-align: center; position: relative; }
+        h1 { color: #ff4757; margin-bottom: 15px; font-size: 1.8em; }
+        .btn { background-color: #ff4757; color: white; border: none; padding: 15px 30px; font-size: 1.1em; border-radius: 50px; cursor: pointer; margin: 8px 0; width: 100%; font-weight: bold; transition: 0.3s; }
+        .btn:hover { transform: scale(1.02); background-color: #ff6b81; }
+        .hidden { display: none; }
+        .result-box img { width: 220px; height: 220px; object-fit: cover; border-radius: 50%; border: 6px solid #ff4757; margin-bottom: 20px; background-color: #eee; }
+        .result-title { font-size: 1.6em; font-weight: bold; color: #ff4757; margin-bottom: 10px; }
+        .result-desc { font-style: italic; color: #555; margin-bottom: 25px; background: #f1f2f6; padding: 15px; border-radius: 15px; }
+        .loader { border: 6px solid #f3f3f3; border-top: 6px solid #ff4757; border-radius: 50%; width: 60px; height: 60px; animation: spin 1s linear infinite; margin: 0 auto 20px auto; }
+        .progress-container { width: 100%; background-color: #e0e0e0; border-radius: 10px; margin-bottom: 25px; height: 8px; }
+        .progress-bar { height: 100%; background-color: #ff4757; width: 0%; transition: width 0.4s ease-in-out; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div id="intro">
+            <h1>💘 Máy Dò Người Yêu 💘</h1>
+            <p>Hệ thống AI đang phân tích dữ liệu của: <b style="color:#ff4757;">Phan Lê Trang</b></p>
+            <p>Dựa trên sở thích: Bún riêu, Truyện Nguyễn Nhật Ánh & Phong cách "tổ lái" Hà Tĩnh.</p>
+            <button class="btn" onclick="startQuiz()">Bắt đầu quét</button>
+        </div>
+
+        <div id="quiz" class="hidden">
+            <div class="progress-container"><div class="progress-bar" id="progress"></div></div>
+            <div class="question-box">
+                <h2 id="question-text">Loading...</h2>
+                <div id="answers"></div>
+            </div>
+        </div>
+
+        <div id="loading" class="hidden">
+            <div class="loader"></div>
+            <p id="loading-text" style="font-weight:bold; color:#ff4757;">Đang xử lý...</p>
+        </div>
+
+        <div id="result" class="hidden">
+            <div class="result-box">
+                <img id="result-img" src="" alt="Kết quả">
+                <div class="result-title" id="result-name"></div>
+                <div class="result-desc" id="result-desc"></div>
+                <button class="btn" onclick="location.reload()">Thử lại (Vẫn là tui thôi)</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            { text: "Khi đi ăn bún riêu, hành động nào 'ghi điểm' nhất?", answers: ["Vắt chanh, lấy đũa cho Trang", "Gọi tô full topping gạch cua", "Ngồi ngắm Trang ăn ngon lành", "Tranh trả tiền (dù thất bại)"] },
+            { text: "Chàng trai trong truyện Nguyễn Nhật Ánh mà Trang thích?", answers: ["Si tình, mắt biếc (như Ngạn)", "Ngốc xít nhưng chân thành", "Badboy phố huyện", "Tất cả các ý trên"] },
+            { text: "Khi Trang lái xe 'tổ lái' Hà Tĩnh, người yêu nên làm gì?", answers: ["Ôm chặt và cầu nguyện", "Đua cùng cho vui", "Mua sẵn bảo hiểm", "Chuẩn bị bông băng & skincare"] },
+            { text: "Nhân vật hoạt hình giống tính cách Trang nhất?", answers: ["Cu Shin (Bựa & Lầy)", "Doraemon (Tốt bụng)", "Conan (Soi mói)", "Jerry (Thông minh)"] },
+            { text: "Ai là người hợp với Trang nhất quả đất?", answers: ["Nguyễn Lê Anh Tuấn", "Tuấn (Phiên bản Si tình)", "Tuấn (Phiên bản Gia trưởng)", "Tuấn (Phiên bản Cute)"] }
+        ];
+
+        // LƯU Ý: Tên file ảnh phải upload lên GitHub chính xác từng chữ
+        const results = [
+            {
+                name: "⭐ Nguyễn Lê Anh Tuấn ⭐",
+                desc: "<b>Phiên bản: Thần đồng bóng rổ - Hệ Tinh Tế.</b><br>Ném bóng thì trượt nhưng ném vào tim Trang thì trúng phóc. Luôn biết Trang thích gì, dẫn đi ăn bún riêu và chiều chuộng hết mực.",
+                img: "./hinh1.jpg" 
+            },
+            {
+                name: "🎸 Tuấn Ngạn (Mắt Biếc) 🎸",
+                desc: "<b>Phiên bản: Chàng Si Tình.</b><br>Đôi mắt đẹp như chứa cả bầu trời. Dù Trang có chạy xe ẩu lướt qua, anh vẫn đứng đó chờ em (hoặc chờ bắt em về).",
+                img: "./hinh2.png"
+            },
+            {
+                name: "🧀 Bé Cải (Tuấn Cute) 🧀",
+                desc: "<b>Phiên bản: Dễ thương phô mai que - Hệ Hay Cãi.</b><br>Tính cách lầy lội như Cu Shin. Hay 'cãi' lời Trang nhưng thực ra là để Trang cười. Nuôi tốn cơm nhưng vui cửa vui nhà.",
+                img: "./hinh3.jpg"
+            },
+            {
+                name: "💢 Tuấn Gia Trưởng 💢",
+                desc: "<b>Phiên bản: Gia Trưởng (Yêu Ngầm).</b><br>'Em đi đâu? Tại sao không thoa kem chống nắng?'. Cục súc nhưng là người lo cho sức khỏe và làn da Trang nhất.",
+                img: "./hinh4.png"
+            }
+        ];
+
+        let currentQuestion = 0;
+
+        function startQuiz() {
+            document.getElementById('intro').classList.add('hidden');
+            document.getElementById('quiz').classList.remove('hidden');
+            showQuestion();
+        }
+
+        function showQuestion() {
+            const q = questions[currentQuestion];
+            document.getElementById('question-text').innerText = q.text;
+            const answersDiv = document.getElementById('answers');
+            answersDiv.innerHTML = '';
+            document.getElementById('progress').style.width = ((currentQuestion) / questions.length) * 100 + '%';
+            q.answers.forEach(ans => {
+                const btn = document.createElement('button');
+                btn.className = 'btn';
+                btn.innerText = ans;
+                btn.onclick = nextQuestion;
+                answersDiv.appendChild(btn);
+            });
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questions.length) { showQuestion(); } else { finishQuiz(); }
+        }
+
+        function finishQuiz() {
+            document.getElementById('quiz').classList.add('hidden');
+            document.getElementById('loading').classList.remove('hidden');
+            const loadingText = document.getElementById('loading-text');
+            const texts = ["Đang quét dữ liệu Hà Tĩnh...", "Phân tích tốc độ lái xe...", "Đang đọc Nguyễn Nhật Ánh...", "Tìm thấy người ấy..."];
+            let i = 0;
+            const interval = setInterval(() => { if(i < texts.length) loadingText.innerText = texts[i++]; }, 1000);
+            setTimeout(() => { clearInterval(interval); showResult(); }, 4000);
+        }
+
+        function showResult() {
+            document.getElementById('loading').classList.add('hidden');
+            document.getElementById('result').classList.remove('hidden');
+            const randomIndex = Math.floor(Math.random() * results.length);
+            const res = results[randomIndex];
+            document.getElementById('result-name').innerHTML = res.name;
+            document.getElementById('result-desc').innerHTML = res.desc;
+            document.getElementById('result-img').src = res.img;
+        }
+    </script>
+</body>
+</html>
