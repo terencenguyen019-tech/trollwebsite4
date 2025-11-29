@@ -12,7 +12,14 @@
         .btn { background-color: #ff4757; color: white; border: none; padding: 15px 30px; font-size: 1.1em; border-radius: 50px; cursor: pointer; margin: 8px 0; width: 100%; font-weight: bold; transition: 0.3s; }
         .btn:hover { transform: scale(1.02); background-color: #ff6b81; }
         .hidden { display: none; }
-        .result-box img { width: 220px; height: 220px; object-fit: cover; border-radius: 50%; border: 6px solid #ff4757; margin-bottom: 20px; background-color: #eee; }
+        .result-box img { 
+            width: 220px; height: 220px; 
+            object-fit: cover; 
+            border-radius: 50%; 
+            border: 6px solid #ff4757; 
+            margin-bottom: 20px; 
+            background-color: #eee; 
+        }
         .result-title { font-size: 1.6em; font-weight: bold; color: #ff4757; margin-bottom: 10px; }
         .result-desc { font-style: italic; color: #555; margin-bottom: 25px; background: #f1f2f6; padding: 15px; border-radius: 15px; }
         .loader { border: 6px solid #f3f3f3; border-top: 6px solid #ff4757; border-radius: 50%; width: 60px; height: 60px; animation: spin 1s linear infinite; margin: 0 auto 20px auto; }
@@ -62,7 +69,7 @@
             { text: "Ai là người hợp với Trang nhất quả đất?", answers: ["Nguyễn Lê Anh Tuấn", "Tuấn (Phiên bản Si tình)", "Tuấn (Phiên bản Gia trưởng)", "Tuấn (Phiên bản Cute)"] }
         ];
 
-        // LƯU Ý: Tên file ảnh phải upload lên GitHub chính xác từng chữ
+        // LƯU Ý: Tên file ảnh ở đây phải khớp với tên file bạn đã đổi trên GitHub
         const results = [
             {
                 name: "⭐ Nguyễn Lê Anh Tuấn ⭐",
@@ -131,7 +138,15 @@
             const res = results[randomIndex];
             document.getElementById('result-name').innerHTML = res.name;
             document.getElementById('result-desc').innerHTML = res.desc;
-            document.getElementById('result-img').src = res.img;
+            
+            // Xử lý hiện ảnh
+            const imgElement = document.getElementById('result-img');
+            imgElement.src = res.img;
+            
+            // Nếu ảnh lỗi sẽ báo (giúp bạn biết đường sửa)
+            imgElement.onerror = function() {
+                alert("Lỗi: Không tìm thấy ảnh tên là '" + res.img + "'. Bạn hãy kiểm tra lại trên GitHub xem đã đổi tên file đúng chưa nhé!");
+            };
         }
     </script>
 </body>
